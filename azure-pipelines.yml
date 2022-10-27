@@ -25,7 +25,7 @@ steps:
   inputs:
     SonarCloud: 'sonarcloud-lab-final'
     organization: 'laboratorio-final'
-    projectKey: 'laboratorio-final'
+    projectKey: 'Laboratorio-Final_spring-boot-kubernetes'
     projectName: 'spring-boot-kubernetes'
   
 
