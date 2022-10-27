@@ -23,7 +23,7 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
 
-- stage: Test 
+- stage: Code Review 
   jobs:
   - job: sonar
     workspace:
@@ -55,3 +55,17 @@ stages:
         inputs:
           pollingTimeoutSec: '300'
         displayName: 'Publish Analysis Results'
+
+- stage: SourceCodeAnalysis
+  jobs:
+  - job: sca
+    steps:
+     - task: dependency-check-build-task@6
+       inputs:
+         projectName: 'spring-boot-kubernetes'
+         scanPath: '$(Build.SourcesDirectory)/build/libs'
+         format: 'HTML'
+       displayName: SCA
+
+
+ 
