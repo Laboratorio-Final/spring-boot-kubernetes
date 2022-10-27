@@ -23,7 +23,7 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
 
-- stage: Code Review 
+- stage: CodeReview 
   jobs:
   - job: sonar
     workspace:
