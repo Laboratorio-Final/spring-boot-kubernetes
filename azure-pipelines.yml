@@ -23,43 +23,21 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
 
-- stage: SAST 
+- stage: DAST
   jobs:
-  - job: sonar
-    workspace:
-      clean: all
-    displayName:  Code Review
+  - job: Job
+    displayName: 'DAST'
     steps:
-      - task: SonarCloudPrepare@1
-        inputs:
-          SonarCloud: 'sonarcloud'
-          organization: 'laboratorio-final'
-          projectKey: 'Laboratorio-Final_spring-boot-kubernetes'
-          projectName: 'spring-boot-kubernetes'
-
-      - task: Maven@4
-        inputs:
-          mavenPomFile: 'pom.xml'
-          publishJUnitResults: true
-          testResultsFiles: '**/surefire-reports/TEST-*.xml'
-          javaHomeOption: 'JDKVersion'
-          jdkVersionOption: '1.11'
-          mavenVersionOption: 'Default'
-          mavenAuthenticateFeed: false
-          effectivePomSkip: false
-          sonarQubeRunAnalysis: true
-          sqMavenPluginVersionChoice: 'latest'
-        displayName: 'Analizar rama actual'
-
-      - task: sonarcloud-buildbreaker@2
-        inputs:
-          SonarCloud: 'sonarcloud'
-          organization: 'laboratorio-final'
-
-- stage: Docker
-  jobs:
-  - job: docker
-    steps:
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
     - task: DockerInstaller@0
       inputs:
         dockerVersion: '17.09.0-ce'
@@ -73,10 +51,17 @@ stages:
         tags: 'latest'
       displayName: Build Docker
 
-    - script: | 
+    - script: |
         sudo apt-get install -y rpm
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
-          sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
-        trivy image lytch000/spring-boot-kubernetes:latest
+        wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
+        sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
+        trivy image -s "HIGH,CRITICAL" --exit-code 1 lytch000/spring-boot-kubernetes:latest
       displayName: Image Scan
+    
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'docker-spring-boot'
+        repository: 'plytch000/spring-boot-kubernetes'
+        command: 'push'
+        tags: 'latest'
     
