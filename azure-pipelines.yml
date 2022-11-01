@@ -60,7 +60,7 @@ stages:
     
     - task: Docker@2
       inputs:
-        containerRegistry: 'docker-spring-boot'
+        containerRegistry: 'Docker'
         repository: 'plytch000/spring-boot-kubernetes'
         command: 'push'
         tags: 'latest'
