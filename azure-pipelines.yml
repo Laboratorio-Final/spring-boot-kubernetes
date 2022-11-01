@@ -64,7 +64,7 @@ stages:
      - task: dependency-check-build-task@6
        inputs:
          projectName: 'spring-boot-kubernetes'
-         scanPath: '$(Build.SourcesDirectory)'
+         scanPath: '$(Build.SourcesDirectory)/build/libs'
          format: 'HTML'
        displayName: SourceCodeAnalysis
     
@@ -81,20 +81,20 @@ stages:
         containerRegistry: 'Docker'
         command: 'login'
         tags: 
+      
     - task: Docker@2
       inputs:
         containerRegistry: 'Docker'
-        repository: 'lytch000/spring-boot-kubernetes'
         command: 'build'
         Dockerfile: '**/Dockerfile'
         tags: 'latest'
     - script: | 
-        sudo apt-get install -y rpm
-        wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
-        sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
-        trivy image lytch000/spring-boot-kubernetes:latest
+          sudo apt-get install -y rpm
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
+          sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
+          trivy image lytch000/spring-boot-kubernetes:latest
       displayName: Image Scan
-      
+
     - task: Docker@2
       inputs:
         containerRegistry: 'Docker'
