@@ -67,6 +67,7 @@ stages:
     - task: Docker@2
       inputs:
         containerRegistry: 'Docker'
+        repository: 'lytch000/spring-boot-kubernetes'
         command: 'login'
         tags: 
     
@@ -75,4 +76,17 @@ stages:
         containerRegistry: 'Docker'
         command: 'build'
         Dockerfile: '**/Dockerfile'
+        tags: 'latest'
+    - script: | 
+        sudo apt-get install -y rpm
+        wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
+        sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
+        trivy image lytch000/pet-clinic:latest
+      displayName: Image-Scan
+    
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'Docker'
+        repository: 'lytch000/spring-boot-kubernetes'
+        command: 'push'
         tags: 'latest'
