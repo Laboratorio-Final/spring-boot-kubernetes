@@ -23,7 +23,7 @@ stages:
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
 
-- stage: CodeReview 
+- stage: SAST 
   jobs:
   - job: sonar
     workspace:
@@ -50,11 +50,12 @@ stages:
           sonarQubeRunAnalysis: true
           sqMavenPluginVersionChoice: 'latest'
         displayName: 'Analizar rama actual'
-  
-      - task: SonarCloudPublish@1
+
+      - task: sonarcloud-buildbreaker@2
         inputs:
-          pollingTimeoutSec: '300'
-        displayName: 'Publicar Resultado Analisis'
+          SonarCloud: 'sonarcloud'
+          organization: 'laboratorio-final'
+
 
 - stage: SourceCodeAnalysis
   jobs:
